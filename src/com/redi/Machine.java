@@ -1,9 +1,6 @@
 package com.redi;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Machine {
 
@@ -11,8 +8,7 @@ public class Machine {
     int itemSlots; //Maximum number of slots (each containing a certain amount of the same item)
     int slotCapacity; //Maximum capacity of each slot (how many items it can contain)
     TreeSet<Double> acceptedMoneySize;
-    ArrayList<Item> inventory = new ArrayList<>();
-    TreeMap<String, Integer> inventoryRef = new TreeMap<>(); //Map which links a code to the matching product's index inside the ArrayList inventory
+    TreeMap<String, Item> inventory = new TreeMap<String, Item>();
 
     Scanner scanner = new Scanner(System.in);
 
@@ -29,8 +25,8 @@ public class Machine {
         System.out.println("Name: " + name);
         System.out.println("This machine has a total of " + itemSlots + " slots, " + (itemSlots - inventory.size()) + " of which are currently unused.");
         System.out.println("Here is the current content of the " + inventory.size() + " used slots: ");
-        for (Item k : inventory) {
-            System.out.println(k.quantity + " x " + k.name);
+        for (Item k : inventory.values()) {
+            System.out.println(k.quantity + " x " + k.product.name);
         }
         System.out.print("This machine accepts the following coins and banknotes: ");
         for (double i : acceptedMoneySize) {
@@ -40,23 +36,21 @@ public class Machine {
     }
 
     //Add a new product.
-    public void addItem(String code, String name, double price, int quantity) {
+    public void addItem(Product product, int quantity) {
         if (inventory.size() == itemSlots) {
             System.out.println("There are no available slots for new products!");
         } else {
-            inventory.add(new Item(code, name, price, quantity));
-            inventoryRef.put(code.toLowerCase(), inventory.size() - 1);
+            inventory.put(product.code, new Item(product, quantity));
         }
     }
 
     //Select product by code.
     public Item selectItem(String code) {
-        return inventory.get(inventoryRef.get(code.toLowerCase()));
+        return inventory.get(code);
     }
-
     //Add a certain amount of an existing product.
     public void refurbish(String code, int quantity) {
-        if (!inventoryRef.containsKey(code.toLowerCase())) {
+        if (!inventory.containsKey(code)) {
             System.out.println("This code is not associated to any product! Please enter a correct code.");
         } else {
             if (quantity > slotCapacity || (quantity + selectItem(code).quantity) > slotCapacity) {
@@ -71,13 +65,13 @@ public class Machine {
     //Withdraw a product.
     public void withdraw(String code) {
         selectItem(code).quantity -= 1;
-        System.out.println("Enjoy your " + selectItem(code).name + "!");
+        System.out.println("Enjoy your " + selectItem(code).product.name + "!");
     }
 
     //Show the list of available products along with their codes.
     public void showProducts() {
-        for (Item i : inventory) {
-            System.out.print(i.code + " " + i.name + "  ");
+        for (Item i : inventory.values()) {
+            System.out.print(i.product.code + " " + i.product.name + "  ");
         }
     }
 
@@ -87,15 +81,15 @@ public class Machine {
         showProducts();
         System.out.println();
         String code = scanner.next();
-        while (!inventoryRef.containsKey(code) || selectItem(code).quantity == 0) {
-            if(!inventoryRef.containsKey(code)){
+        while (!inventory.containsKey(code) || selectItem(code).quantity == 0) {
+            if(!inventory.containsKey(code)){
                 System.out.println("Wrong code! Try again.");
             }else{
-                System.out.println(selectItem(code).name + " is sold out, sorry! Please choose another product.");
+                System.out.println(selectItem(code).product.name + " is sold out, sorry! Please choose another product.");
             }
             code = scanner.next();
         }
-        pay(selectItem(code).price);
+        pay(selectItem(code).product.price);
         withdraw(code);
     }
 
