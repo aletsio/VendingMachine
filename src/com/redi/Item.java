@@ -2,15 +2,11 @@ package com.redi;
 
 public class Item {
 
-    String code;
-    String name;
-    double price;
+    Product product;
     int quantity;
 
-    public Item(String code,String name,double price,int quantity){
-        this.code = code;
-        this.name = name;
-        this.price = price;
+    public Item(Product product, int quantity){
+        this.product = product;
         this.quantity = quantity;
     }
 
