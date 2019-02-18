@@ -1,9 +1,6 @@
 package com.redi;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Machine {
 
@@ -16,12 +13,14 @@ public class Machine {
 
     Scanner scanner = new Scanner(System.in);
 
+
     //Constructor
     public Machine(String name, int itemSlots, int slotCapacity, TreeSet<Double> acceptedMoneySize) {
         this.name = name;
         this.itemSlots = itemSlots;
         this.slotCapacity = slotCapacity;
         this.acceptedMoneySize = acceptedMoneySize;
+        scanner.useLocale(Locale.ENGLISH);
     }
 
     //Show information about the machine (name, capacity, unused slots, current content, accepted money size).
@@ -63,9 +62,9 @@ public class Machine {
                 System.out.println("The quantity exceeds the maximum slot capacity! Please enter a smaller amount (max. " + (slotCapacity - selectItem(code).quantity) + ").");
             } else {
                 selectItem(code).quantity += quantity;
+                System.out.println("The machine has been refurbished! " + quantity + " x " + selectItem(code).name + " added.");
             }
         }
-        System.out.println("The machine has been refurbished!");
     }
 
     //Withdraw a product.
@@ -102,7 +101,7 @@ public class Machine {
     //Pay for the selected product.
     public void pay(double price){
         System.out.print("Please pay " + price + " Euro. ");
-        System.out.println("Insert coins or banknotes (type the amount - use a comma for decimals).");
+        System.out.println("Insert coins or banknotes (type the amount - use a dot for decimals).");
         double insertedMoney = scanner.nextDouble();
         double currentAmount = 0.0;
         do{
@@ -133,10 +132,10 @@ public class Machine {
             buy();
             System.out.println("Would you like to buy another product? [y/n]");
             answer = scanner.next();
-            if(!answer.equals("y")&&!answer.equals("n")&&!answer.equals("yes")){
+            if(!answer.equals("y")&&!answer.equals("n")&&!answer.equals("no")&&!answer.equals("yes")){
                 System.out.println("I'll take that as a no.");
             }
-        }while(answer.equals("y"));
+        }while(answer.equals("y")||answer.equals("yes"));
         System.out.println("Ok, have a nice day!");
     }
 
